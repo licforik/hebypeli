@@ -1,0 +1,108 @@
+import time
+import random
+import difflib
+
+class TypingTest:
+    def __init__(self):
+        self.texts = [
+            "Привет, мир! Это тест скорости печати на Python.",
+            "Быстрая печать помогает экономить время при работе с компьютером.",
+            "Программирование - это увлекательное занятие, требующее практики.",
+            "Сегодня отличная погода для проверки своих навыков печати.",
+            "Python - один из самых популярных языков программирования в мире.",
+            "Каждый день учитесь чему-то новому и развивайте свои навыки.",
+            "Скорость печати важна для программистов и офисных работников.",
+            "Практика помогает улучшить любой навык, включая печать.",
+            "Чем больше вы печатаете, тем быстрее становится ваша скорость.",
+            "Тестирование скорости печати помогает отслеживать прогресс."
+        ]
+    
+    def get_text(self):
+        return random.choice(self.texts)
+    
+    def calculate_results(self, original, typed, elapsed_time):
+        chars_per_minute = (len(typed) / elapsed_time) * 60
+        words_per_minute = chars_per_minute / 5
+        correct_chars = sum(1 for o, t in zip(original, typed) if o == t)
+        accuracy = (correct_chars / max(len(original), len(typed))) * 100
+        
+        return {
+            'time': elapsed_time,
+            'chars_per_minute': chars_per_minute,
+            'words_per_minute': words_per_minute,
+            'accuracy': accuracy,
+            'correct_chars': correct_chars,
+            'total_chars': len(original)
+        }
+    
+    def show_differences(self, original, typed):
+        diff = difflib.ndiff(original, typed)
+        differences = [d for d in diff if d[0] != ' ']
+        
+        if differences:
+            print("\nОшибки:")
+            for d in differences[:10]:
+                if d[0] == '-':
+                    print(f"  Пропущен символ: '{d[-1]}'")
+                elif d[0] == '+':
+                    print(f"  Лишний символ: '{d[-1]}'")
+                elif d[0] == '?':
+                    print(f"  Неправильный символ")
+    
+    def run_test(self):
+        print("=" * 60)
+        print("ТЕСТ СКОРОСТИ ПЕЧАТИ".center(60))
+        print("=" * 60)
+        print("Правила:")
+        print("1. Вам будет показан текст")
+        print("2. Напечатайте его как можно быстрее и точнее")
+        print("3. После ввода нажмите Enter")
+        print("=" * 60)
+        
+        input("Нажмите Enter, чтобы начать...")
+        
+        text = self.get_text()
+        print("\n" + "=" * 60)
+        print("ТЕКСТ:")
+        print(text)
+        print("=" * 60)
+        print("\nНачинайте печатать...")
+        
+        start_time = time.time()
+        user_input = input("\n> ")
+        end_time = time.time()
+        
+        elapsed_time = end_time - start_time
+        
+        results = self.calculate_results(text, user_input, elapsed_time)
+        
+        print("\n" + "=" * 60)
+        print("РЕЗУЛЬТАТЫ".center(60))
+        print("=" * 60)
+        print(f"Время: {results['time']:.2f} секунд")
+        print(f"Скорость: {results['chars_per_minute']:.1f} символов/мин")
+        print(f"Скорость: {results['words_per_minute']:.1f} слов/мин")
+        print(f"Точность: {results['accuracy']:.1f}%")
+        print(f"Правильных символов: {results['correct_chars']} из {results['total_chars']}")
+        
+        if user_input == text:
+            print("\n✅ ИДЕАЛЬНО! Без единой ошибки!")
+        else:
+            print("\n⚠️ Есть ошибки в тексте")
+            self.show_differences(text, user_input)
+        
+        print("=" * 60)
+    
+    def main(self):
+        while True:
+            self.run_test()
+            print("\n")
+            again = input("Хотите попробовать еще раз? (да/нет): ").lower()
+            if again not in ['да', 'yes', 'y', 'д']:
+                print("Спасибо за тест! До свидания!")
+                break
+            print("\n" * 2)
+
+if __name__ == "__main__":
+    test = TypingTest()
+    test.main()
